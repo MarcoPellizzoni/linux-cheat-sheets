@@ -1,0 +1,85 @@
+LINUX COMMANDS:
+
+- uname -a 		-> info sul sistema operativo
+- whoami 		-> utente corrente
+- hostname 		-> nome della macchina in rete
+- whatis <command>	-> mostra una breve descrizione del comando
+- man <command> 	-> mostra il manuale del comando
+- pwd			-> directory corrente
+- date
+- which <command>	-> mostra dove si trova il binario associato al comando
+- bc			-> apre la calcolatrice binaria (solo operazioni intere)
+
+- ">" Esempio: echo "ciao" > file 	-> ridireziona l'output del comando verso un file
+- ">>" 					-> ridireziona l'ouput facendo l'append invece che sovrascrivere
+- "<"					-> ridireziona l'input 
+NOTA: pensa come se fosse il comando "put to" del C++ (metti verso quella o questa cosa da una parte o dall altra)
+- "2>"					-> ridirezione solo l'output dello stderr
+
+- |		-> prende l'output di un comando e lo mette in input al prossimo comando (crea uno stream di comandi)
+- tee		-> è come lo snodo a T di una tubatura, ridireziona l'output a un file e al contempo lo lascia nello stdout. Se il file non esiste lo crea
+- tee -a 	-> stessa cosa ma fa l'append
+- cat		-> legge e direziona allo stdout il contenuto di un file
+- chmod 	-> cambiare permessi in codifica ottale
+- chown 	-> cambiare chi è l'owner del file
+- touch 	-> crea file
+- ls -ltr 	-> ordina per data
+- ls -lti 	-> lista e scrive il codice inode del file (è l'identificativo numerico univoco del file)
+- ln 		-> crea link hard a un file (l'inode risulta uguale), se elimino l'originale lui continua a funzionare
+- ln -s 	-> crea soft link (inode diverso), se elimino il file originale, il file link si rompe e va buttato
+- wildcards 
+	*	-> qualunque carattere o insieme di caratteri 
+	?	-> qualunque carattere singolo
+	{1..5}  -> range da 1 a 5
+- more		-> serve per mostrare l ouput schermo una pagina alla volta. Utile quando c'è un botto di roba che viene sputata nel terminale in un unico colpo
+
+FILTRI:
+- cut		-> filtra per (ci sono molte opzioni, vedere la doc)
+- awk		-> estrare le colonne desiderate, quando si tratta di un output a forma di tabella
+- sort		-> riordina
+- sort | uniq 	-> riordina e elimina i duplicati (nota: si puo anche usare solo uniq ma è consigliato di no perché da solo puo dare risultati errati eliminando non duplicati)
+- | grep <kw>	-> filtra per keyword
+- grep <kw> <file> -> cerca e mostra se trova la <kw> in <file>
+
+- wc		(wc= wordcount) 
+	-l	-> conta linee
+	-w	-> parole
+	-m	-> conta caratteri (inclusi speciali)
+	-c	-> dimensione in byte
+
+- diff		-> comparazione riga per riga
+- cmp		-> comparazione byte per byte
+
+- tar		-> container
+	cvf	-> crea container -> tar cvf <nome>.tar <cosa>
+	xvf	-> extract container -> tar xvf <nome>.tar (lo fa nella cartella dove si trova)
+- gzip		-> compirme file -> posso comprimere un tar e creare un tar.gz
+	-d	-> decomprime file
+
+
+- sed 		-> molto ricco e complesso per elaborare modificare file di testo
+
+
+- visudo	-> apre il file di testo /etc/sudoers dove sono scritte varie propietà di sistema tra cui i permessi dell'utente root e il nome del gruppo sudo con relativi permessi
+		-> in ubunti il gruppo si chiama sudo, in redhat si chiama wheel
+- usermod -aG sudo <utente>	-> per aggiungere l'<utente> ai sudoers
+- grep sudo /etc/group		-> per mostrare chi appartiene ai sudoers
+- users		-> mostra gli utenti
+- write <utente> -> per scrivere un messaggio da mandare sul terminale dell <utente>
+- wall		-> per mandare un messaggio sul terminale di tutti gli utenti del sistema
+
+
+// PROCESSES AND SERVICES
+Application 	-> qualsiasi cosa che può essere runnato
+Script		-> è un file di testo impacchettato per essere eseguito
+Process		-> processo aperto per via diretta
+Daemon 		-> processo che runna continuamente in background (non si stoppa a meno di non essere killato)
+Job		-> è un servizio, ovvero un processo, in modalità schedule
+
+- systemctl	-> (in versioni linux vecchie si chiama service)
+- ps		-> 
+- top		->
+- kill		->
+
+
+
