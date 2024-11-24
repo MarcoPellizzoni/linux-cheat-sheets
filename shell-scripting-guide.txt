@@ -1,0 +1,43 @@
+///////////////////////////////////
+// KERNEL
+///////////////////////////////////
+
+Il kernel è l'interfaccia tra l'harware e il software. Quando si eseguono
+script shell o comandi, questi vengo passati al kernel che si occupa di 
+tradurli.
+Il sistema operativo è l'insieme di shell e kernel. Tutti gli applicativi
+installati girano passando attraverso la shell e il kernel
+
+////////////////////////////////////
+// SHELL
+////////////////////////////////////
+
+La shell è un contenitore. 
+Tutte le interfacce utente sono una shell, anche la gui di windows.
+
+echo $0 	-> per sapere in quale shell sei.
+
+cat /etc/shells	-> mostra tutte le shell disponibili
+cat /etc/passwd -> monstra tutti gli utenti con relative shell che sono associate al loro login
+
+Posso modificare passwd per far usare un altra shell al dato utente 
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+// BASH SCRIPTING TUTORIAL
+/////////////////////////////////////////////////////////////////////////////////////
+-- Uno script bash può essere chiamato solo tramite path assoluto
+-- Deve avere permessi di esecusione (chmod +x)
+-- 
+
+#!/bin/bash	-> specifica quale shell dovrà interpretare lo script. In tal caso bash
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,231 @@
+///////////////////////////////////////
+// GENERAL COMMANDS
+///////////////////////////////////////
+- uname -a 			-> info sul sistema operativo
+- whoami 			-> utente corrente
+- hostname 			-> nome della macchina in rete
+- whatis <command>	-> mostra una breve descrizione del comando
+- man <command> 	-> mostra il manuale del comando
+- pwd				-> directory corrente
+- date
+- which <command>	-> mostra dove si trova il binario associato al comando
+- bc				-> apre la calcolatrice binaria (solo operazioni intere)
+
+// "put to" tipo C++
+- ">" 				-> ridireziona l'output del comando verso un file
+	Esempio: echo "ciao" > file
+- ">>" 				-> ridireziona l'ouput facendo l'append invece che sovrascrivere
+- "<"				-> ridireziona l'input 
+- "2>"				-> ridirezione solo l'output dello stderr
+
+- |					-> prende l'output di un comando e lo mette in input al prossimo comando
+- tee				-> ridireziona l'output a un file e al contempo lo lascia nello stdout. Se il file non esiste lo crea
+- tee -a 			-> stessa cosa ma fa l'append
+- cat				-> legge e direziona allo stdout il contenuto di un file
+- chmod 			-> cambiare permessi in codifica ottale
+- chown 			-> cambiare chi è l'owner del file
+- touch 			-> crea file
+- ls -ltr 			-> ordina per data
+- ls -lti 			-> lista e scrive il codice inode del file (è l'identificativo numerico univoco del file)
+- ln 				-> crea link hard a un file (l'inode risulta uguale), se elimino l'originale lui continua a funzionare
+- ln -s 			-> crea soft link (inode diverso), se elimino il file originale, il file link si rompe e va buttato
+- wildcards 
+	*				-> qualunque carattere o insieme di caratteri 
+	?				-> qualunque carattere singolo
+	{1..5}  		-> range da 1 a 5
+- more				-> serve per mostrare l ouput schermo una pagina alla volta. Utile quando c'è un botto di roba che viene sputata nel terminale in un unico colpo
+
+FILTRI:
+- cut				-> filtra per (ci sono molte opzioni, vedere la doc)
+- awk				-> estrare le colonne desiderate, quando si tratta di un output a forma di tabella
+- sort				-> riordina
+- sort | uniq 		-> riordina e elimina i duplicati (nota: si puo anche usare solo uniq ma è consigliato di no perché da solo puo dare risultati errati eliminando non duplicati)
+- | grep <kw>		-> filtra per keyword
+- grep <kw> <file> 	-> cerca e mostra se trova la <kw> in <file>
+			Esempio: Per cercare "ciao" in tutti i file in cartella: grep ciao *
+
+- wc		(wc= wordcount) 
+	-l				-> conta linee
+	-w				-> parole
+	-m				-> conta caratteri (inclusi speciali)
+	-c				-> dimensione in byte
+
+- diff				-> comparazione riga per riga
+- cmp				-> comparazione byte per byte
+
+- tar				-> container
+	cvf				-> crea container -> tar cvf <nome>.tar <cosa>
+	xvf				-> extract container -> tar xvf <nome>.tar (lo fa nella cartella dove si trova)
+- gzip				-> compirme file -> posso comprimere un tar e creare un tar.gz
+	-d				-> decomprime file
+
+- visudo			-> apre il file di testo /etc/sudoers dove sono scritte varie propietà di sistema tra cui i permessi dell'utente root e il nome del gruppo sudo con relativi permessi
+					-> in ubunti il gruppo si chiama sudo, in redhat si chiama wheel
+- usermod -aG sudo <utente>	-> per aggiungere l'<utente> ai sudoers
+- grep sudo /etc/group		-> per mostrare chi appartiene ai sudoers
+- users				-> mostra gli utenti
+- write <utente> 	-> per scrivere un messaggio da mandare sul terminale dell <utente>
+- wall				-> per mandare un messaggio sul terminale di tutti gli utenti del sistema
+
+////////////////////////////////////
+// SED COMMAND
+////////////////////////////////////
+-- sostituire tutte le stringhe in un file di testo con una nuova stringa
+-- trovare ed eliminare una riga del file
+-- eliminare una o piu righe
+-- eliminare tutte le righe vuote
+
+Sostituzione di tutte le strighe "ciao" con "miao" e output del risultato in stdout
+sed '/s/ciao/miao/' <nome-file>
+sed '/s/ciao/miao/g' <nome-file> (g specifica piu chiaramente che l'intento è di sostituire tutte
+
+per modificare il file effettivamente aggiugnere l'opzione "insert":
+sed -i '/s/ciao/miao/' <nome-file>
+
+Eliminazione di stringa (in pratica sostituzione con stringa vuota"
+sed '/s/ciao//g' <nome-file>
+
+Eliminazione di tutte le righe che hanno una stringa "ciao"
+sed -i '/ciao/d' <nome-file>
+
+Eliminazione della riga 2 (le righe sono contate partendo da 1)
+sed -i '2d' <nome-file>
+
+Eliminazione delle righe 1,2 (le righe sono contate partendo da 1)
+sed -i '1,2d' <nome-file>
+
+///////////////////////////////////
+// PROCESSES AND SERVICES
+///////////////////////////////////
+Application 		-> qualsiasi cosa che può essere runnato
+Script				-> è un file di testo impacchettato per essere eseguito
+Process				-> processo aperto per via diretta
+Daemon 				-> processo che runna continuamente in background (non si stoppa a meno di non essere killato)
+Job					-> è un servizio, ovvero un processo, in modalità schedule
+PID					-> process ID univoco
+
+- systemctl			(gestione dei servizi)
+	start/stop/status <nome-servizio.service> 	-> attiva disattiva servizio e mostra stato
+	enable/disable <nome-servizio.service		-> abilita/disabilita il servizio all'avvio
+	restart/reload <nome-servizio.service>		-> ricarica riattiva servizio, utile se ho cambiato qualcosa sei configuration file ecc
+	list-units --all							-> mostra tutti i servizi attivi e caricati
+		
+		-> Per aggiungere un servizio, bisogna creare un file di nome /etc/systemd/system/<nome-servizio>.service
+	
+	 poweroff
+	halt
+	reboot
+
+- ps				-> mostra processi attivi nella shell corrente
+	-e				-> mostra tutti i processi attivi
+	-aux			-> mostra tutti ma con più dettagli
+	-ef				-> mostra tutti in formato full listing
+- top				-> mostra i processi in ordine di carico
+	-u <username>	-> mostra solo quelli dell'utente <username>
+	dalla videata di top, premere 
+	"c" per vedere il path di origine dei processi
+	"k" <PID> per killare un processo
+	"M" per ordinare in ordine di carico in memoria
+	"P" per ordinare in ordine di carico in CPU
+- kill [option] PID	-> stoppa processo (da usare quando systemctl stop non riesce a stoppare il processo)
+	-l				-> per vedere tutti i segnali disponibili
+	-9				-> segnale piu potente per killare
+- killall <PID>			-> per killare il processo e tutti i processi figli
+- pkill	<procname>	-> per killare usando il nome del processo invece che il PID
+- crontab			-> per schedulare i processi -> un processo schedulato diventa un Job
+	-e				-> per editare
+	All'interno dell'editor specificare:
+	minuto ora giornodelmese mese giornosettimana <comando-da-eseguire>
+	Esempio: 0 16 * 1 * echo "Ciao"  --> ogni giorno di gennaio alle 16 esegue l'echo di ciao
+	-l				-> per listare le entry
+	-r				-> per rimuovere tutte le entry 
+	
+	In /etc ci sono delle directory che iniziano per cron. -> se metto uno script dentro una di queste ottengo lo stesso effeto, con la differenza che viene eseguito con la cadenza indicata dal nome della directory
+
+- at				-> come crontab ma aggiungi un job da eseguire solo una volta al momento specificata
+	
+- CTRL-Z + bg 		-> ctrl-Z stoppa il processo del comando avviato da shell. bg lo riavvia in background
+- <comando> &		-> avvia il processo del comando in brackground grazie a &
+- jobs				-> mostra i job attivi
+- nohup <comando> & -> runna in background e resta attivo anche se chiudo il terminale
+- nice -n [-20..19] <command> -> da certa proprità al comando. Priorità specificata con valore da -20 a 19 (il valore piu basso ha priorita piu alta
+
+
+/////////////////////////////////
+// SYSTEM MONITORING
+/////////////////////////////////
+----> ricorda di usare "man" per vedere il manuale del comando e sapere come usarlo
+
+- df
+	-h	-> info sulle partizioni di sistema
+- du		-> per info sulla occupazione di memoria non volatile
+- dmesg		-> per vedere tutti i log di sistema (utile per cercare errori)
+	| more	(per vedere una pagina alla volta)
+- iostat	-> input output statistics
+- ip		-> gestione della interfacca di rete
+	route | column -t 	-> routing info
+- ss		-> traccia tutti pacchetti inviati ricevuti con numeri di porta 
+
+- /proc/ -> directory dove ci sono tutte le system info scritte su file. Per esempio /proc/cpuinfo
+
+- /var/log/ -> directory di log di sistema
+	boot.log 	-> log del boot di sistema (quello che si vede al caricamento del sistema)
+	secure.log	-> log dei login
+	messages.log	-> log dove finiscono la maggior parte dei log mentre il sistema è acceso
+
+
+////////////////////////////////
+// CTRL KEYS
+////////////////////////////////
+- CTRL-U	-> cancella quello che è scritto in riga di comando
+- CTRL-C	-> esce dall esecuzione di un comando
+- CTRL-Z	-> manda in background il processo lanciato in terminale
+- CTRL-D	-> exit da un programma interattivo (che legge stdin)
+
+
+///////////////////////////////////
+// SCRIPT
+///////////////////////////////////
+Una volta lanciato, tutto quello che viene scritto da riga di comando 
+finisce nel file specificato.
+Al termine dall sessione di script digitare exit per uscire
+Utile come file di log delle azioni eseguite.
+
+- script <nome-file>		
+	...exit
+
+
+///////////////////////////////////
+// ENVIRONMENT
+///////////////////////////////////
+- env 		-> printa tutte le variabili d ambiente
+- echo $VAR 	-> printa valore di VAR
+
+export var=valore 			-> set variabile localmente
+
+echo export var=valore >> .bashrc	-> set per lo user (per vedere gli effetti: logout, login)
+
+echo export var=valore >> /etc/profile 	-> set globale
+
+
+//////////////////////////////////////////
+// PERMESSI SPECIALI
+//////////////////////////////////////////
+Funzionano solo con programmi scritti in C/C++
+Servono per dare i permessi solo al proprietario della cartella o del file
+
+chmod 1xxx ./dir  	--> Anche se gli altri hanno i permessi di scrivere nella dir, comunque non avranno i permessi di cancellare la dir
+
+chmod 2xxx ./dir  	--> I file creati dentro ereditano la group ownership della parent dir
+
+chmod 4xxx <executable>	--> Solo il proprietario dell eseguibile potrà lanciarlo
+
+chmod 0xxx --> per rimuovere il bit
+
+RICORDA: ooogggxxx  	--> ooo owner permissions
+			--> ggg group permissions
+			--> xxx others permissions (i permessi degli altri utenti)
+
+
+
+

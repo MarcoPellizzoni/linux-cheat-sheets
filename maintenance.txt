@@ -1,0 +1,69 @@
+//////////////////////////////////
+// BASICS
+//////////////////////////////////
+- shutdown
+- init (0..6) 	-> reboot sistema con un livello di boot specifico
+- reboot
+- halt		-> è come spegnere usando il bottone, killa tutto e spegne
+- hostnamectl - set-hostname <nome> -> cambia il nome host. (si può fare la stessa cosa editando il file /etc/hostname
+- uname -a	-> info architettura e kernel
+- dmidecode	-> memoria
+- su - <user>	-> logga con un altro utente nel terminale corrente
+
+
+//////////////////////////////////
+// RECUPERO LA PASSWORD DI ROOT
+//////////////////////////////////
+da boot menu di grup, entra nell'editor di grub boot premendo "E"
+cancellare la tringa "ro" (che sta per read-only e fa bootare tutto quello che segue in modalità lettura)
+scrivere rw (read-write)
+di seguito aggiungere la seguente: 
+	init=/sysroot/bin/sh 
+CTRL-X per startare
+chroot /sysroot --> monta il filesystem su sysroot
+passwd root	--> e poi inserire la nuova password 
+touch /.autorelabel
+exit
+reboot
+
+
+///////////////////////////////////////
+// IL BOOT
+///////////////////////////////////////
+RUN LEVELS:
+0 shutdown
+1 single user
+2 multiuser senza network
+3 multiuser con network
+5 multiuser con network e gui
+6 reboot
+who -r -> dice che run level sono
+
+BOOT PROCESS (BOOTSTRAP) (di qualunque pc):
+corrente --> CPU --> BIOS (basic inputoutput system) --> CMOS --> HDD (MBR) --> OS
+--Il BIOS è un firmware installato nella ROM della scheda madre
+--Il BIOS carica i suoi settings che sono salvati nella memoria CMOS.
+--La CMOS è alimentata da una batteria, questo per preservare i setting del bios anche in caso di mancanza di corrente.
+--La CPU legge le istruzioni del BIOS e le esegue. Una di queste è l'istruzione POST
+--POST (Power on self test), la cpu scorre tutti i dispositivi attaccati alla scheda madre per testare se sono apposto. Se uno non lo è ferma il boot.
+--La CPU ora va a leggere la primissima porzione di memoria del disco (qualle di indirizzo 0x0), chiamata MBR (Master Boot Record).
+--Nella MBR è salvata l'info sul sistema operativo, il quale viene poi caricato nella RAM
+--Da questo punto in poi le procedure vanno avanti in autonomia poiché gestite internamente dal sistema operativo 
+
+LINUX BOOTSTRAP:
+--> BIOS <-- CMOS 
+	--> MBR --> GRUB --> Kernel --> /sbin/init
+ 					
+--BIOS esegue MBR che sta all'indirizzo 0 del disco
+--Nell MBR è salvato l'info su dove si trova Grub, e lo esegue
+--Grub esegue il Kernel basandosi sulle info contenute nel file /boot/grub2/grub.cfg
+--kernel (nucleo del SO) esegue la initrd.img (initial ram disk).
+  Questa è usata dal kernel come root file system temporaneo fintantoché il kernel non ha finito il boot e il filesystem vero non è montato
+  Dalla initrd.img caricare i driver e moduli vari necessari per interfacciarsi con i dispositivi connessi alla scheda madre
+  Infine esegue systemd, primissimo processo del OS (PID=1)
+--systemd quindi esegue i vari processi da lanciare a boot time sulla base del runlevel specificato di default nella cartella /etc/systemd/system/default.target
+
+NOTA: Nella dir /etc/rc.d/ ci sono le cartelle rc1.d, rc2.d,... in queste si trovano file di boot specifici per ciascun run level
+Questi file sono semplicemente dei link a .sh da eseguire e che si trovano in /etc/init.d/
+Questi .sh lanciano ognuno un elemento specifico del sistema, per esempio la gui o la network 
+
