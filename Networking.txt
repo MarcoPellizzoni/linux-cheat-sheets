@@ -1,0 +1,107 @@
+
+======================================================================================================================================
+NETWORK INTERFACES
+
+////////////////////////////////////////////
+// CONFIG FILES
+///////////////////////////////////////////
+
+/etc/nsswitch.conf
+
+/etc/hosts		-> fa da DNS locale
+
+/etc/sysconfig/network
+/etc/systemd/network.conf	-> per settare vari parametri 
+
+find / -name *ifcfg*	-> trova dove si trova il file con le configurazioni della scheda di rete.
+			Su RedHat dovrebbe trovarsi in /etc/sysconfig/network-scripts			
+
+/etc/resolv.conf	-> DNS
+
+////////////////////////////////////////
+// COMMANDS
+////////////////////////////////////////
+
+- ip 		-> fa una marea di cose, meglio guardare la doc
+	a	-> info sulla route attuale
+
+ 
+- tcpdump	-> sniffa il traffico di rete in entrata e uscita
+
+- netstat	-> info sintetiche sulla configurazione attuale
+
+- ethtool 	-> un'altra marea di cose. Vedi options...
+	<NIC-name>	-> mostra caratteristiche della scheda (tipo se è duplex, velocità massima, ecc)
+	
+
+NOTA:
+NIC=Network Interface Connection. Ha un nome (per esempio eth0).
+NIC speciali:
+	- lo	-> per il loopback
+	- virb0	-> virtual bridge 0, usato per il NAT in virtual environments...
+
+
+//////////////////////////////////////////////
+// NETWORK MANAGER
+//////////////////////////////////////////////
+
+Nelle versioni moderne di linux, invece di andare a modificare i file di configurazione a mano, è possibile sfruttare i network manager.
+
+- nmcli		-> NetworkManagerCommandLineInterface
+- nmtui		-> NetworkManagerTextUserInterface
+		-> Stra comodo perché renderizza una gui direttamente sul terminale
+- GNOME settings...
+
+## NIC BONDING ##
+Se abbiamo più di una porta fisica, possiamo combinarle assieme in un unico NIC al fine di:
+	- Ridondanza	-> Significa che posso collegarmi a una o all'altra ma rappresentano la stessa NIC
+	- Aumento di throughput -> Connetto a entrambe le porte raddoppiando la velocità
+
+- Edit connection
+- "Delete" le schede da accoppiare (non le elimina davvero, le disabilita togliendogli l'ip)
+- Add --> Team (NB: Bond è la versione vecchia di Team)
+- Dare un nome al team
+- Team slaves -> Add -> nei campi Profile Name e Device scrivere il NIC-name della scheda 
+- IPv4 configuration -> si può lasciare così oppure assegnare al Team un ip statico assieme a gateway, dns ecc..
+
+In generale nmtui è meglio di nmcli perché più comodo, ma tutto può essere fatto con nmcli (vedi online per i comandi)
+
+Due comandi comodi e veloci:
+	- nmcli connection up[down] <NIC-name>				-> abilita[disabilita] scheda
+	- nmcli connection modify <NIC-name> +ipv4.addresses <new-ip>	-> aggiunge un ip secondario
+
+
+## NIC BONDING VERSIONI LINUX VECCHIE ##
+Su RedHat:
+[for Ref.] -> https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/deployment_guide/s1-networkscripts-interfaces#s1-networkscripts-interfaces
+
+--> Vedi guida Creating-NIC-Bonding.pdf
+
+- modinfo bonding	-> per verificare che il driver per il bonding è installato
+			Se non è installato -> modprobe bonding
+
+- creare il file di configurazione di rete per la scheda (virtuale) di bond
+	/etc/sysconfig/network-scripts/ifcfg-bond0
+
+- Modificare i file di config di rete per le due schede da accoppiare in modo tale da avere bond0 come master e loro stessi come slave
+
+- systemctl restart network
+
+
+=======================================================================================================================================================
+SOCKETS 
+
+- ping
+- curl	-> specifico per protocollo http
+- wget	-> per download di file
+
+- ss	-> statistical info riguardo ai socket aperti (rimpiazza netstat)
+	ss -u	-> solo udp
+	ss -t	-> solo tcp	
+	ss -x	-> solo unix (sono comunicazioni tra processi interni al sistema)
+
+ 
+
+
+
+

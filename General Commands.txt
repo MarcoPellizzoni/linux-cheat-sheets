@@ -1,5 +1,5 @@
 ///////////////////////////////////////
-// GENERAL COMMANDS
+// BASIC COMMANDS
 ///////////////////////////////////////
 - uname -a 			-> info sul sistema operativo
 - whoami 			-> utente corrente
