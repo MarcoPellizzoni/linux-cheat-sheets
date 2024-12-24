@@ -10,6 +10,7 @@
 - dmidecode	-> memoria
 - su - <user>	-> logga con un altro utente nel terminale corrente
 
+- dmesg		-> solo kernel più nuovi, serve per vedere il log degli eventi nel kernel. Per debug di problemi harware.
 
 //////////////////////////////////
 // RECUPERO LA PASSWORD DI ROOT
